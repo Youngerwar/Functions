@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Python Plotting</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="plot"></div>
+    <script>
+        function plot_data() {
+            Plotly.d3.json('/get_plot_data', function(error, data) {
+                if (error) return console.warn(error);
+                Plotly.newPlot('plot', data);
+            });
+        }
+        plot_data();
+    </script>
+    
+    <script type="text/python">
+        import json
+        import numpy as np
+        import plotly.graph_objects as go
+
+        x = np.linspace(0, 10, 100)
+        y = np.sin(x)
+
+        data = [
+            go.Scatter(
+                x=x,
+                y=y
+            )
+        ]
+
+        layout = go.Layout(
+            title='Interactive Plot',
+            xaxis_title="X",
+            yaxis_title="Y",
+            font=dict(
+                family="Courier New, monospace",
+                size=18,
+                color="#7f7f7f"
+            )
+        )
+
+        fig = go.Figure(data=data, layout=layout)
+        plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        def get_plot_data(request):
+            return HttpResponse(plot_json, content_type='application/json')
+    </script>
+</body>
+</html>
