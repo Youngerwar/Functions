@@ -1,52 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Interactive Python Plotting</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Linear Function Plotter</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
 </head>
 <body>
+    <h1>Linear Function Plotter</h1>
     <div id="plot"></div>
-    <script>
-        function plot_data() {
-            Plotly.d3.json('/get_plot_data', function(error, data) {
-                if (error) return console.warn(error);
-                Plotly.newPlot('plot', data);
-            });
-        }
-        plot_data();
-    </script>
-    
-    <script type="text/python">
-        import json
-        import numpy as np
-        import plotly.graph_objects as go
 
-        x = np.linspace(0, 10, 100)
-        y = np.sin(x)
+    <script type="text/javascript">
+        // 在这里嵌入您的 Python 代码生成的 Vega-Lite 规范
+        var vlSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 600,
+            "height": 400,
+            "data": {
+                "function": "linear",
+                "params": {
+                    "k": 1,
+                    "b": 0
+                }
+            },
+            "mark": "line",
+            "encoding": {
+                "x": {"field": "x", "type": "quantitative"},
+                "y": {"field": "y", "type": "quantitative"}
+            }
+        };
 
-        data = [
-            go.Scatter(
-                x=x,
-                y=y
-            )
-        ]
-
-        layout = go.Layout(
-            title='Interactive Plot',
-            xaxis_title="X",
-            yaxis_title="Y",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            )
-        )
-
-        fig = go.Figure(data=data, layout=layout)
-        plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-        def get_plot_data(request):
-            return HttpResponse(plot_json, content_type='application/json')
+        vegaEmbed('#plot', vlSpec);
     </script>
 </body>
 </html>
